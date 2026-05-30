@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function Dashboard() {
 
   return (
@@ -11,6 +13,13 @@ function Dashboard() {
       <p className="mt-5 text-xl text-gray-300">
         Welcome to your dashboard 🚀
       </p>
+
+      <Link
+        to="/upload"
+        className="inline-block mt-10 bg-purple-500 px-8 py-4 rounded-xl text-lg hover:bg-purple-600 transition"
+      >
+        Upload Resume
+      </Link>
 
     </div>
 

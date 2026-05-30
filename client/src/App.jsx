@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import ResumeUpload from './pages/ResumeUpload'
 
 function App() {
 
@@ -31,6 +32,11 @@ function App() {
           path="/dashboard"
           element={<Dashboard />}
         />
+
+        <Route
+  path="/upload"
+  element={<ResumeUpload />}
+/>
 
       </Routes>
 
