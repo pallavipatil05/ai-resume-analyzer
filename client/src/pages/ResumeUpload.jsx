@@ -4,11 +4,22 @@ import axios from 'axios'
 function ResumeUpload() {
 
   const [file, setFile] = useState(null)
-const [message, setMessage] = useState('')
-const [resumeText, setResumeText] = useState('')
-const [skills, setSkills] = useState([])
-const [atsScore, setAtsScore] = useState(0)
-const [suggestions, setSuggestions] = useState([])
+
+  const [message, setMessage] = useState('')
+  const [resumeText, setResumeText] = useState('')
+  const [skills, setSkills] = useState([])
+  const [atsScore, setAtsScore] = useState(0)
+  const [suggestions, setSuggestions] = useState([])
+
+  const [selectedRole, setSelectedRole] = useState('')
+  const [jobMatch, setJobMatch] = useState(null)
+  const [missingSkills, setMissingSkills] = useState([])
+
+  const [stats, setStats] = useState({
+    skillsCount: 0,
+    projectsCount: 0
+  })
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0])
   }
@@ -22,6 +33,7 @@ const [suggestions, setSuggestions] = useState([])
     const formData = new FormData()
 
     formData.append('resume', file)
+    formData.append('role', selectedRole)
 
     try {
 
@@ -37,18 +49,26 @@ const [suggestions, setSuggestions] = useState([])
 
       setMessage(res.data.message)
       setResumeText(res.data.text)
-      setSkills(res.data.skills)
-      setAtsScore(res.data.atsScore)
-      setSuggestions(res.data.suggestions)
+      setSkills(res.data.skills || [])
+      setAtsScore(res.data.atsScore || 0)
+      setSuggestions(res.data.suggestions || [])
+
+      setJobMatch(res.data.jobMatch)
+      setMissingSkills(res.data.missingSkills || [])
+
+      if (res.data.stats) {
+        setStats(res.data.stats)
+      }
+
     } catch (err) {
 
       console.log(err)
 
       setMessage(
-  err.response?.data?.message ||
-  err.message ||
-  'Upload Failed'
-)
+        err.response?.data?.message ||
+        err.message ||
+        'Upload Failed'
+      )
 
     }
 
@@ -58,7 +78,7 @@ const [suggestions, setSuggestions] = useState([])
 
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-8">
 
-      <div className="w-full max-w-2xl p-10 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
+      <div className="w-full max-w-3xl p-10 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl">
 
         <h1 className="text-4xl font-bold text-center text-purple-400 mb-8">
           Upload Your Resume
@@ -78,95 +98,17 @@ const [suggestions, setSuggestions] = useState([])
           </p>
 
         </div>
-        {
-  resumeText && (
 
-    <div className="mt-8 bg-black/20 p-4 rounded-xl">
-
-      <h2 className="text-xl font-bold mb-3">
-        Extracted Resume Text
-      </h2>
-
-      <pre className="whitespace-pre-wrap text-sm">
-        {resumeText}
-      </pre>
-
-    </div>
-
-  )
-}
-{
-  skills.length > 0 && (
-
-    <div className="mt-8">
-
-      <h2 className="text-2xl font-bold text-purple-400 mb-4">
-        Detected Skills
-      </h2>
-
-      <div className="flex flex-wrap gap-3">
-
-        {
-          skills.map((skill, index) => (
-
-            <span
-              key={index}
-              className="px-4 py-2 bg-purple-500 rounded-full"
-            >
-              {skill}
-            </span>
-
-          ))
-        }
-
-      </div>
-
-    </div>
-
-  )
-}
-{
-  atsScore > 0 && (
-
-    <div className="mt-8 bg-white/10 backdrop-blur-xl p-6 rounded-2xl border border-white/20">
-
-      <h2 className="text-2xl font-bold text-purple-400 mb-3">
-        ATS Score
-      </h2>
-
-      <div className="text-6xl font-bold text-green-400">
-        {atsScore}/100
-      </div>
-
-    </div>
-
-  )
-}
-{
-  suggestions.length > 0 && (
-
-    <div className="mt-8 bg-white/10 p-6 rounded-2xl">
-
-      <h2 className="text-2xl font-bold text-yellow-400 mb-4">
-        Resume Suggestions
-      </h2>
-
-      <ul className="space-y-2">
-
-        {suggestions.map((item, index) => (
-
-          <li key={index}>
-            ⚠ {item}
-          </li>
-
-        ))}
-
-      </ul>
-
-    </div>
-
-  )
-}
+        <select
+          value={selectedRole}
+          onChange={(e) => setSelectedRole(e.target.value)}
+          className="w-full p-4 rounded-xl bg-white/10 border border-white/20 mt-6"
+        >
+          <option value="">Select Target Role</option>
+          <option value="frontend">Frontend Developer</option>
+          <option value="backend">Backend Developer</option>
+          <option value="fullstack">Full Stack Developer</option>
+        </select>
 
         <button
           onClick={handleUpload}
@@ -179,6 +121,132 @@ const [suggestions, setSuggestions] = useState([])
           <p className="text-center mt-6 text-green-400">
             {message}
           </p>
+        )}
+
+        {resumeText && (
+
+          <div className="mt-8 bg-black/20 p-4 rounded-xl">
+
+            <h2 className="text-xl font-bold mb-3 text-white">
+              Extracted Resume Text
+            </h2>
+
+            <pre className="whitespace-pre-wrap text-sm text-gray-300">
+              {resumeText}
+            </pre>
+
+          </div>
+
+        )}
+
+        {skills.length > 0 && (
+
+          <div className="mt-8">
+
+            <h2 className="text-2xl font-bold text-purple-400 mb-4">
+              Detected Skills
+            </h2>
+
+            <div className="flex flex-wrap gap-3">
+
+              {skills.map((skill, index) => (
+
+                <span
+                  key={index}
+                  className="px-4 py-2 bg-purple-500 rounded-full"
+                >
+                  {skill}
+                </span>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+        {atsScore > 0 && (
+
+          <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+
+            <h2 className="text-2xl font-bold text-purple-400 mb-3">
+              ATS Score
+            </h2>
+
+            <div className="text-6xl font-bold text-green-400">
+              {atsScore}/100
+            </div>
+
+          </div>
+
+        )}
+
+        {jobMatch !== null && (
+
+          <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+
+            <h2 className="text-2xl font-bold text-blue-400 mb-3">
+              Job Match Score
+            </h2>
+
+            <div className="text-6xl font-bold text-green-400">
+              {jobMatch}%
+            </div>
+
+          </div>
+
+        )}
+
+        {missingSkills.length > 0 && (
+
+          <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+
+            <h2 className="text-2xl font-bold text-red-400 mb-4">
+              Missing Skills
+            </h2>
+
+            <div className="flex flex-wrap gap-3">
+
+              {missingSkills.map((skill, index) => (
+
+                <span
+                  key={index}
+                  className="px-4 py-2 bg-red-500 rounded-full"
+                >
+                  {skill}
+                </span>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        )}
+
+        {suggestions.length > 0 && (
+
+          <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+
+            <h2 className="text-2xl font-bold text-yellow-400 mb-4">
+              Resume Suggestions
+            </h2>
+
+            <ul className="space-y-2">
+
+              {suggestions.map((item, index) => (
+
+                <li key={index}>
+                  ⚠ {item}
+                </li>
+
+              ))}
+
+            </ul>
+
+          </div>
+
         )}
 
       </div>
