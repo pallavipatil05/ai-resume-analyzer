@@ -1,6 +1,12 @@
 import { useState } from 'react'
 import axios from 'axios'
 import jsPDF from 'jspdf'
+import {
+  CircularProgressbar,
+  buildStyles
+} from 'react-circular-progressbar'
+
+import 'react-circular-progressbar/dist/styles.css'
 
 function ResumeUpload() {
 
@@ -15,7 +21,8 @@ function ResumeUpload() {
   const [selectedRole, setSelectedRole] = useState('')
   const [jobMatch, setJobMatch] = useState(null)
   const [missingSkills, setMissingSkills] = useState([])
-
+  const [strengths, setStrengths] = useState([])
+const [weaknesses, setWeaknesses] = useState([])
   const [stats, setStats] = useState({
     skillsCount: 0,
     projectsCount: 0
@@ -56,7 +63,8 @@ function ResumeUpload() {
 
       setJobMatch(res.data.jobMatch)
       setMissingSkills(res.data.missingSkills || [])
-
+      setStrengths(res.data.strengths || [])
+setWeaknesses(res.data.weaknesses || [])
       if (res.data.stats) {
         setStats(res.data.stats)
       }
@@ -234,9 +242,20 @@ function ResumeUpload() {
               ATS Score
             </h2>
 
-            <div className="text-6xl font-bold text-green-400">
-              {atsScore}/100
-            </div>
+            <div className="w-48 h-48 mx-auto">
+
+  <CircularProgressbar
+    value={atsScore}
+    text={`${atsScore}%`}
+    styles={buildStyles({
+      textSize: '16px',
+      pathColor: '#8b5cf6',
+      textColor: '#ffffff',
+      trailColor: '#1e293b'
+    })}
+  />
+
+</div>
 
           </div>
 
@@ -331,6 +350,28 @@ function ResumeUpload() {
   </div>
 
 </div>
+{strengths.length > 0 && (
+  <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+    <h2 className="text-2xl font-bold text-green-400 mb-4">
+      Resume Strengths
+    </h2>
+
+    {strengths.map((item, index) => (
+      <p key={index}>✅ {item}</p>
+    ))}
+  </div>
+)}
+{weaknesses.length > 0 && (
+  <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+    <h2 className="text-2xl font-bold text-red-400 mb-4">
+      Areas to Improve
+    </h2>
+
+    {weaknesses.map((item, index) => (
+      <p key={index}>⚠️ {item}</p>
+    ))}
+  </div>
+)}
 
       </div>
 

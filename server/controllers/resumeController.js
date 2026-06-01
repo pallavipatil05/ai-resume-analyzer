@@ -11,11 +11,9 @@ const analyzeResume = async (req, res) => {
     }
 
     const dataBuffer = fs.readFileSync(req.file.path)
-
     const pdfData = await pdfParse(dataBuffer)
 
     const resumeText = pdfData.text
-
     const selectedRole = req.body.role
 
     const skillsDatabase = [
@@ -70,10 +68,8 @@ const analyzeResume = async (req, res) => {
 
     let atsScore = 0
 
-    // Skills (30)
     atsScore += Math.min(foundSkills.length * 3, 30)
 
-    // Education (15)
     if (
       resumeText.toLowerCase().includes('bachelor') ||
       resumeText.toLowerCase().includes('b.e') ||
@@ -82,13 +78,11 @@ const analyzeResume = async (req, res) => {
       atsScore += 15
     }
 
-    // Projects (15)
     const projectCount =
       (resumeText.match(/project/gi) || []).length
 
     atsScore += Math.min(projectCount * 5, 15)
 
-    // Contact Info (10)
     if (
       resumeText.includes('@') &&
       /\d{10}/.test(resumeText)
@@ -96,7 +90,6 @@ const analyzeResume = async (req, res) => {
       atsScore += 10
     }
 
-    // Experience (15)
     if (
       resumeText.toLowerCase().includes('internship') ||
       resumeText.toLowerCase().includes('experience')
@@ -104,7 +97,6 @@ const analyzeResume = async (req, res) => {
       atsScore += 15
     }
 
-    // Certifications (15)
     if (
       resumeText.toLowerCase().includes('certificate') ||
       resumeText.toLowerCase().includes('certification')
@@ -141,6 +133,46 @@ const analyzeResume = async (req, res) => {
     }
 
     // =========================
+    // STRENGTHS & WEAKNESSES
+    // =========================
+
+    const strengths = []
+    const weaknesses = []
+
+    if (foundSkills.length >= 8) {
+      strengths.push('Strong technical skill set')
+    }
+
+    if (projectCount >= 2) {
+      strengths.push('Good project experience')
+    }
+
+    if (
+      resumeText.includes('@') &&
+      /\d{10}/.test(resumeText)
+    ) {
+      strengths.push('Complete contact information')
+    }
+
+    if (
+      !resumeText.toLowerCase().includes('internship') &&
+      !resumeText.toLowerCase().includes('experience')
+    ) {
+      weaknesses.push('No internship or work experience')
+    }
+
+    if (
+      !resumeText.toLowerCase().includes('certificate') &&
+      !resumeText.toLowerCase().includes('certification')
+    ) {
+      weaknesses.push('No certifications found')
+    }
+
+    if (foundSkills.length < 6) {
+      weaknesses.push('Limited technical skills')
+    }
+
+    // =========================
     // RESPONSE
     // =========================
 
@@ -152,6 +184,8 @@ const analyzeResume = async (req, res) => {
       suggestions,
       jobMatch,
       missingSkills,
+      strengths,
+      weaknesses,
       stats: {
         skillsCount: foundSkills.length,
         projectsCount: projectCount
