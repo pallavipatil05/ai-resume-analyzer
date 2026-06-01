@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import jsPDF from 'jspdf'
 
 function ResumeUpload() {
 
@@ -73,6 +74,48 @@ function ResumeUpload() {
     }
 
   }
+  const downloadReport = () => {
+
+  const doc = new jsPDF()
+
+  doc.setFontSize(20)
+  doc.text('AI Resume Analysis Report', 20, 20)
+
+  doc.setFontSize(14)
+  doc.text(`ATS Score: ${atsScore}/100`, 20, 40)
+
+  doc.text(
+    `Skills Found: ${skills.join(', ')}`,
+    20,
+    60
+  )
+
+  if (jobMatch !== null) {
+    doc.text(
+      `Job Match: ${jobMatch}%`,
+      20,
+      80
+    )
+  }
+
+  if (missingSkills.length > 0) {
+    doc.text(
+      `Missing Skills: ${missingSkills.join(', ')}`,
+      20,
+      100
+    )
+  }
+
+  if (suggestions.length > 0) {
+    doc.text(
+      `Suggestions: ${suggestions.join(', ')}`,
+      20,
+      120
+    )
+  }
+
+  doc.save('Resume_Report.pdf')
+}
 
   return (
 
@@ -100,15 +143,26 @@ function ResumeUpload() {
         </div>
 
         <select
-          value={selectedRole}
-          onChange={(e) => setSelectedRole(e.target.value)}
-          className="w-full p-4 rounded-xl bg-white/10 border border-white/20 mt-6"
-        >
-          <option value="">Select Target Role</option>
-          <option value="frontend">Frontend Developer</option>
-          <option value="backend">Backend Developer</option>
-          <option value="fullstack">Full Stack Developer</option>
-        </select>
+  value={selectedRole}
+  onChange={(e) => setSelectedRole(e.target.value)}
+  className="w-full p-4 rounded-xl bg-slate-700 text-white border border-white/20 mt-6"
+>
+  <option value="" className="text-black">
+    Select Target Role
+  </option>
+
+  <option value="frontend" className="text-black">
+    Frontend Developer
+  </option>
+
+  <option value="backend" className="text-black">
+    Backend Developer
+  </option>
+
+  <option value="fullstack" className="text-black">
+    Full Stack Developer
+  </option>
+</select>
 
         <button
           onClick={handleUpload}
@@ -116,6 +170,12 @@ function ResumeUpload() {
         >
           Analyze Resume
         </button>
+        <button
+  onClick={downloadReport}
+  className="w-full mt-6 bg-green-500 hover:bg-green-600 p-4 rounded-xl font-semibold"
+>
+  Download Analysis Report
+</button>
 
         {message && (
           <p className="text-center mt-6 text-green-400">
@@ -248,6 +308,29 @@ function ResumeUpload() {
           </div>
 
         )}
+        <div className="grid grid-cols-2 gap-4 mt-8">
+
+  <div className="bg-white/10 p-6 rounded-2xl">
+    <h3 className="text-lg text-gray-300">
+      Skills Found
+    </h3>
+
+    <p className="text-4xl font-bold text-purple-400">
+      {stats.skillsCount}
+    </p>
+  </div>
+
+  <div className="bg-white/10 p-6 rounded-2xl">
+    <h3 className="text-lg text-gray-300">
+      Projects Found
+    </h3>
+
+    <p className="text-4xl font-bold text-green-400">
+      {stats.projectsCount}
+    </p>
+  </div>
+
+</div>
 
       </div>
 
