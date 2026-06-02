@@ -1,6 +1,7 @@
 const fs = require('fs')
 const pdfParse = require('pdf-parse')
 const roles = require('../services/jobRoles')
+const db = require('../config/db')
 
 const analyzeResume = async (req, res) => {
   try {
@@ -171,6 +172,33 @@ const analyzeResume = async (req, res) => {
     if (foundSkills.length < 6) {
       weaknesses.push('Limited technical skills')
     }
+
+    const userId = req.body.userId
+
+let conn
+
+try {
+
+  conn = await db.getConnection()
+
+  await conn.query(
+    `
+    INSERT INTO resume_history
+    (user_id, ats_score, job_match)
+    VALUES (?, ?, ?)
+    `,
+    [
+      userId,
+      atsScore,
+      jobMatch || 0
+    ]
+  )
+
+} finally {
+
+  if (conn) conn.release()
+
+}
 
     // =========================
     // RESPONSE

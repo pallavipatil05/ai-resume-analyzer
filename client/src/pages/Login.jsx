@@ -32,13 +32,23 @@ function Login() {
       )
 
       localStorage.setItem(
-        'token',
-        res.data.token
-      )
+  'token',
+  res.data.token
+)
 
-      alert(res.data.message)
+localStorage.setItem(
+  'userId',
+  res.data.user.id
+)
 
-      navigate('/dashboard')
+localStorage.setItem(
+  'userName',
+  res.data.user.name
+)
+
+alert(res.data.message)
+
+navigate('/dashboard')
 
     } catch (err) {
 

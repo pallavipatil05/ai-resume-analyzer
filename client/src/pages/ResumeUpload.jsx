@@ -37,11 +37,15 @@ const [weaknesses, setWeaknesses] = useState([])
     if (!file) {
       return alert('Please select a resume')
     }
-
+  
     const formData = new FormData()
 
-    formData.append('resume', file)
-    formData.append('role', selectedRole)
+formData.append('resume', file)
+formData.append('role', selectedRole)
+formData.append(
+  'userId',
+  localStorage.getItem('userId')
+)
 
     try {
 
