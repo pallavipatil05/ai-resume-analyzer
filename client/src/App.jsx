@@ -4,6 +4,7 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import ResumeUpload from './pages/ResumeUpload'
+import History from './pages/History'
 
 function App() {
 
@@ -36,6 +37,10 @@ function App() {
         <Route
   path="/upload"
   element={<ResumeUpload />}
+/>
+        <Route
+  path="/history"
+  element={<History />}
 />
 
       </Routes>

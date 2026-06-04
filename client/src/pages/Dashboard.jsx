@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Dashboard() {
+
+  const navigate = useNavigate()
 
   return (
 
@@ -14,12 +16,23 @@ function Dashboard() {
         Welcome to your dashboard 🚀
       </p>
 
-      <Link
-        to="/upload"
-        className="inline-block mt-10 bg-purple-500 px-8 py-4 rounded-xl text-lg hover:bg-purple-600 transition"
-      >
-        Upload Resume
-      </Link>
+      <div className="flex gap-4 mt-10">
+
+        <Link
+          to="/upload"
+          className="bg-purple-500 px-8 py-4 rounded-xl text-lg hover:bg-purple-600 transition"
+        >
+          Upload Resume
+        </Link>
+
+        <button
+          onClick={() => navigate('/history')}
+          className="bg-blue-500 px-8 py-4 rounded-xl text-lg hover:bg-blue-600 transition"
+        >
+          View History
+        </button>
+
+      </div>
 
     </div>
 
