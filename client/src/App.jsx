@@ -21,13 +21,13 @@ function App() {
         />
 
         <Route
-          path="/register"
-          element={<Register />}
+          path="/login"
+          element={<Login />}
         />
 
         <Route
-          path="/login"
-          element={<Login />}
+          path="/register"
+          element={<Register />}
         />
 
         <Route
@@ -36,17 +36,19 @@ function App() {
         />
 
         <Route
-  path="/upload"
-  element={<ResumeUpload />}
-/>
+          path="/upload"
+          element={<ResumeUpload />}
+        />
+
         <Route
-  path="/history"
-  element={<History />}
-/>
-<Route
-  path="/analytics"
-  element={<Analytics />}
-/>
+          path="/history"
+          element={<History />}
+        />
+
+        <Route
+          path="/analytics"
+          element={<Analytics />}
+        />
 
       </Routes>
 
