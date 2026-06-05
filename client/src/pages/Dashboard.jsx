@@ -31,6 +31,12 @@ function Dashboard() {
         >
           View History
         </button>
+        <button
+  onClick={() => navigate('/analytics')}
+  className="bg-green-500 px-8 py-4 rounded-xl text-lg hover:bg-green-600 transition"
+>
+  Analytics
+</button>
 
       </div>
 

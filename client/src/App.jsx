@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import ResumeUpload from './pages/ResumeUpload'
 import History from './pages/History'
+import Analytics from './pages/Analytics'
 
 function App() {
 
@@ -41,6 +42,10 @@ function App() {
         <Route
   path="/history"
   element={<History />}
+/>
+<Route
+  path="/analytics"
+  element={<Analytics />}
 />
 
       </Routes>
