@@ -4,6 +4,17 @@ function Dashboard() {
 
   const navigate = useNavigate()
 
+  const navigate = useNavigate()
+
+const handleLogout = () => {
+
+  localStorage.removeItem('token')
+  localStorage.removeItem('userId')
+
+  navigate('/login')
+
+}
+
   return (
 
     <div className="min-h-screen bg-slate-900 text-white p-10">
@@ -31,10 +42,19 @@ function Dashboard() {
         >
           View History
         </button>
+
         <button
   onClick={() => navigate('/analytics')}
   className="bg-green-500 px-8 py-4 rounded-xl text-lg hover:bg-green-600 transition"
 >
+
+  <button
+  onClick={handleLogout}
+  className="bg-red-500 px-8 py-4 rounded-xl text-lg hover:bg-red-600 transition"
+>
+  Logout
+</button>
+
   Analytics
 </button>
 
