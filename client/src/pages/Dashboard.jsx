@@ -4,16 +4,14 @@ function Dashboard() {
 
   const navigate = useNavigate()
 
-  const navigate = useNavigate()
+  const handleLogout = () => {
 
-const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('userId')
 
-  localStorage.removeItem('token')
-  localStorage.removeItem('userId')
+    navigate('/login')
 
-  navigate('/login')
-
-}
+  }
 
   return (
 
@@ -27,7 +25,7 @@ const handleLogout = () => {
         Welcome to your dashboard 🚀
       </p>
 
-      <div className="flex gap-4 mt-10">
+      <div className="flex flex-wrap gap-4 mt-10">
 
         <Link
           to="/upload"
@@ -44,19 +42,18 @@ const handleLogout = () => {
         </button>
 
         <button
-  onClick={() => navigate('/analytics')}
-  className="bg-green-500 px-8 py-4 rounded-xl text-lg hover:bg-green-600 transition"
->
+          onClick={() => navigate('/analytics')}
+          className="bg-green-500 px-8 py-4 rounded-xl text-lg hover:bg-green-600 transition"
+        >
+          Analytics
+        </button>
 
-  <button
-  onClick={handleLogout}
-  className="bg-red-500 px-8 py-4 rounded-xl text-lg hover:bg-red-600 transition"
->
-  Logout
-</button>
-
-  Analytics
-</button>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 px-8 py-4 rounded-xl text-lg hover:bg-red-600 transition"
+        >
+          Logout
+        </button>
 
       </div>
 

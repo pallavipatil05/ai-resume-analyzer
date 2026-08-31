@@ -23,6 +23,8 @@ function ResumeUpload() {
   const [missingSkills, setMissingSkills] = useState([])
   const [strengths, setStrengths] = useState([])
 const [weaknesses, setWeaknesses] = useState([])
+const [skillGap, setSkillGap] = useState([])
+const [skillMatchPercentage, setSkillMatchPercentage] = useState(0)
   const [stats, setStats] = useState({
     skillsCount: 0,
     projectsCount: 0
@@ -31,6 +33,70 @@ const [weaknesses, setWeaknesses] = useState([])
   const handleFileChange = (e) => {
     setFile(e.target.files[0])
   }
+
+  const calculateSkillGap = (role, userSkills) => {
+
+  const roleSkills = {
+
+    frontend: [
+      'html',
+      'css',
+      'javascript',
+      'react',
+      'typescript',
+      'tailwind',
+      'git'
+    ],
+
+    backend: [
+      'java',
+      'node',
+      'express',
+      'mysql',
+      'mongodb',
+      'rest api',
+      'git'
+    ],
+
+    fullstack: [
+      'html',
+      'css',
+      'javascript',
+      'react',
+      'node',
+      'express',
+      'mysql',
+      'mongodb',
+      'git',
+      'typescript'
+    ]
+
+  }
+
+  const requiredSkills = roleSkills[role] || []
+
+  const normalizedUserSkills = userSkills.map(skill =>
+    skill.toLowerCase()
+  )
+
+  const missing = requiredSkills.filter(skill =>
+    !normalizedUserSkills.includes(skill)
+  )
+
+  const matched = requiredSkills.filter(skill =>
+    normalizedUserSkills.includes(skill)
+  )
+
+  const percentage =
+    requiredSkills.length > 0
+      ? Math.round(
+          (matched.length / requiredSkills.length) * 100
+        )
+      : 0
+
+  setSkillGap(missing)
+  setSkillMatchPercentage(percentage)
+}
 
   const handleUpload = async () => {
 
@@ -64,6 +130,12 @@ formData.append(
       setSkills(res.data.skills || [])
       setAtsScore(res.data.atsScore || 0)
       setSuggestions(res.data.suggestions || [])
+      const detectedSkills = res.data.skills || []
+
+calculateSkillGap(
+  selectedRole,
+  detectedSkills
+)
 
       setJobMatch(res.data.jobMatch)
       setMissingSkills(res.data.missingSkills || [])
@@ -301,6 +373,76 @@ setWeaknesses(res.data.weaknesses || [])
                 </span>
 
               ))}
+              {selectedRole && skills.length > 0 && (
+
+  <div className="mt-8 bg-white/10 p-6 rounded-2xl">
+
+    <h2 className="text-2xl font-bold text-blue-400 mb-4">
+      🎯 Skill Gap Analysis
+    </h2>
+
+    <p className="text-gray-300 mb-4">
+      Target Role:
+      <span className="text-white font-semibold ml-2">
+        {selectedRole === 'frontend'
+          ? 'Frontend Developer'
+          : selectedRole === 'backend'
+          ? 'Backend Developer'
+          : 'Full Stack Developer'}
+      </span>
+    </p>
+
+    <p className="text-gray-300 mb-2">
+      Skill Match
+    </p>
+
+    <div className="w-full bg-slate-700 rounded-full h-5">
+
+      <div
+        className="bg-green-500 h-5 rounded-full transition-all duration-500"
+        style={{
+          width: `${skillMatchPercentage}%`
+        }}
+      />
+
+    </div>
+
+    <p className="text-center text-green-400 font-bold mt-2">
+      {skillMatchPercentage}%
+    </p>
+
+    <h3 className="text-xl font-semibold text-red-400 mt-6 mb-3">
+      Skills to Learn
+    </h3>
+
+    {skillGap.length > 0 ? (
+
+      <div className="flex flex-wrap gap-3">
+
+        {skillGap.map((skill, index) => (
+
+          <span
+            key={index}
+            className="px-4 py-2 bg-red-500 rounded-full"
+          >
+            ❌ {skill}
+          </span>
+
+        ))}
+
+      </div>
+
+    ) : (
+
+      <p className="text-green-400 font-semibold">
+        🎉 You have all the required skills for this role!
+      </p>
+
+    )}
+
+  </div>
+
+)}
 
             </div>
 
